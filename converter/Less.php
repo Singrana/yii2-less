@@ -8,7 +8,7 @@ namespace singrana\assets\converter;
 
 use Yii;
 use yii\caching\FileCache;
-use app\singrana\assets\AssetConverter\Parser;
+use singrana\assets\Parser;
 
 class Less extends Parser
 {
