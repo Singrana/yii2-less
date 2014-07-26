@@ -14,7 +14,6 @@ use yii\helpers\FileHelper;
 
 class Converter extends \yii\web\AssetConverter
 {
-
 	protected $defaultParsersOptions =
 	[
 
@@ -31,10 +30,12 @@ class Converter extends \yii\web\AssetConverter
 
 	public $parsers = [];
 
-	public $force = false;
+	public $force = false; // Set to true of need always rebuild less files
 
 	public function convert($asset, $basePath)
 	{
+		$this->parsers = ArrayHelper::merge($this->defaultParsersOptions, $this->parsers);
+
 		$pos = strrpos($asset, '.');
 		if ($pos === false)
 			return parent::convert($asset, $basePath);
@@ -44,9 +45,7 @@ class Converter extends \yii\web\AssetConverter
 		if (!isset($this->parsers[$ext]))
 			return parent::convert($asset, $basePath);
 
-
-		$parserConfig = ArrayHelper::merge($this->defaultParsersOptions[$ext], $this->parsers[$ext]);
-		$resultFile = FileHelper::normalizePath('/' . substr($asset, 0, $pos + 1) . $parserConfig['output']);
+		$resultFile = FileHelper::normalizePath('/' . substr($asset, 0, $pos + 1) . $this->parsers[$ext]['output']);
 
 		$from = $basePath . '/' . $asset;
 		$to = $basePath . $resultFile;
@@ -56,7 +55,7 @@ class Converter extends \yii\web\AssetConverter
 
 		$this->checkDestinationDir($basePath, $resultFile);
 
-		$asConsoleCommand = isset($parserConfig['asConsoleCommand']) && $parserConfig['asConsoleCommand'];
+		$asConsoleCommand = isset($this->parsers[$ext]['asConsoleCommand']) && $this->parsers[$ext]['asConsoleCommand'];
 		if ($asConsoleCommand)
 		{
 			if (isset($this->commands[$ext]))
@@ -67,8 +66,9 @@ class Converter extends \yii\web\AssetConverter
 		}
 		else
 		{
-			$parser = new $parserConfig['class']($parserConfig['options']);
-			$parserOptions = isset($parserConfig['options']) ? $parserConfig['options'] : array();
+			$class=$this->parsers[$ext]['class'];
+			$parser = new $class($this->parsers[$ext]['options']);
+			$parserOptions = isset($this->parsers[$ext]['options']) ? $this->parsers[$ext]['options'] : array();
 			$parser->parse($from, $to, $parserOptions);
 		}
 
