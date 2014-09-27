@@ -75,7 +75,9 @@ class Converter extends \yii\web\AssetConverter
 		if (YII_DEBUG)
 			Yii::info("Converted $asset into $resultFile ", __CLASS__);
 
-		$resultFile=str_replace(Yii::getAlias('@webroot'), '', $to);
+		//$resultFile=str_replace(Yii::getAlias('@webroot'), '', $to);
+
+		$resultFile = trim(FileHelper::normalizePath($resultFile), '/');
 
 		return $resultFile;
 	}
