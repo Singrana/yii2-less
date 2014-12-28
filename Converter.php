@@ -51,7 +51,7 @@ class Converter extends \yii\web\AssetConverter
 		$to = $basePath . $resultFile;
 
 		if (!$this->needRecompile($from, $to))
-			return str_replace(Yii::getAlias('@webroot'), '', $to);
+			return trim($resultFile, '/');
 
 		$this->checkDestinationDir($basePath, $resultFile);
 
