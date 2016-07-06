@@ -45,13 +45,13 @@ class Converter extends \yii\web\AssetConverter
 		if (!isset($this->parsers[$ext]))
 			return parent::convert($asset, $basePath);
 
-		$resultFile = FileHelper::normalizePath('/' . substr($asset, 0, $pos + 1) . $this->parsers[$ext]['output']);
+		$resultFile = FileHelper::normalizePath(DIRECTORY_SEPARATOR . substr($asset, 0, $pos + 1) . $this->parsers[$ext]['output']);
 
-		$from = $basePath . '/' . $asset;
+		$from = $basePath . DIRECTORY_SEPARATOR . $asset;
 		$to = $basePath . $resultFile;
 
 		if (!$this->needRecompile($from, $to))
-			return trim($resultFile, '/');
+			return trim($resultFile, DIRECTORY_SEPARATOR);
 
 		$this->checkDestinationDir($basePath, $resultFile);
 
@@ -77,7 +77,7 @@ class Converter extends \yii\web\AssetConverter
 
 		//$resultFile=str_replace(Yii::getAlias('@webroot'), '', $to);
 
-		$resultFile = trim(FileHelper::normalizePath($resultFile), '/');
+		$resultFile = trim(FileHelper::normalizePath($resultFile, '/'), '/');
 
 		return $resultFile;
 	}
